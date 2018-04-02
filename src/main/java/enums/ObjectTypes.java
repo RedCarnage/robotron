@@ -1,5 +1,10 @@
 package enums;
 
+/***
+ * 
+ * @author Carl Stika
+ *
+ */
 public enum ObjectTypes {
 	OBJECT_TYPE_UNKOWN,
 	OBJECT_TYPE_PLAYER,
