@@ -10,7 +10,8 @@ import enums.ObjectTypes;
 import interfaces.DrawObject;
 
 /**
- * graphical string display
+ * graphical string display.
+ * 
  * @author Carl
  *
  */

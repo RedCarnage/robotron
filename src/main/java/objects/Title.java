@@ -9,6 +9,14 @@ import enums.ObjectTypes;
 import interfaces.DrawObject;
 import utilitys.GameUtils;
 
+/***
+ * Title for robortron.
+ * 
+ * Need to add color changes.
+ * 
+ * @author Carl Stika
+ *
+ */
 public class Title implements DrawObject  {
 
 	private int colorIndex = 0;

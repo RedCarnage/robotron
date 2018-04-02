@@ -7,6 +7,12 @@ import java.util.List;
 
 import interfaces.ScreenWipe;
 
+/***
+ * Simple RobotTron style of screenwipe.
+ * 
+ * @author Carl Stika
+ *
+ */
 public class ScreenColorWipe implements ScreenWipe {
 	private int screenWidth;
 	private int screenHeight;

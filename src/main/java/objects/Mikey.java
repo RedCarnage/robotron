@@ -9,6 +9,11 @@ import baseframework.SpriteBase;
 import enums.ObjectTypes;
 import interfaces.DrawObject;
 
+/***
+ * Part of the human family. Just has a random walk.
+ * @author Carl Stika
+ *
+ */
 public class Mikey extends SpriteBase {
 	private static final int MIKEY_LEFT = 0;
 	private static final int MIKEY_RIGHT = 3;

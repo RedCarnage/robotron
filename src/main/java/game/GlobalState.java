@@ -2,6 +2,12 @@ package game;
 
 import enums.GameStates;
 
+/**
+ * globalState for the tron Game.
+ * 
+ * @author Carl Stika
+ *
+ */
 public class GlobalState {
 	
 	private static GlobalState instance = null;

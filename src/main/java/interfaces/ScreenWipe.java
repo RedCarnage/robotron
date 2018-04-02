@@ -2,6 +2,11 @@ package interfaces;
 
 import java.awt.Graphics2D;
 
+/**
+ * 
+ * @author Carl Stika
+ *
+ */
 public interface ScreenWipe {
 	
 	public void render(Graphics2D g2d);

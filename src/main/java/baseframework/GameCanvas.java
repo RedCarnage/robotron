@@ -8,6 +8,11 @@ import java.awt.image.BufferStrategy;
 
 import interfaces.GameUpdate;
 
+/**
+ * Provides a canvas for the game that will be updated 60 times a second.
+ * @author Carl Stika
+ *
+ */
 public class GameCanvas extends Canvas {
 	/**
 	 * 

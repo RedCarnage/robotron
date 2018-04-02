@@ -10,6 +10,12 @@ import game.GlobalState;
 import interfaces.DrawObject;
 import sounds.TronSounds;
 
+/***
+ * Simple grunt robot.
+ * 
+ * @author Carl Stika
+ *
+ */
 public class BadRobot extends SpriteBase {
 	private int[][] spriteSheet = {
 			{149, 232, 25, 28}, //bad robot 1

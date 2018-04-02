@@ -1,5 +1,10 @@
 package enums;
 
+/***
+ * 
+ * @author Carl Stika
+ *
+ */
 public enum ObstacleTypes {
 	OBSTACLE_STAR,
 	OBSTACLE_SQUARE,

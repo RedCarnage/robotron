@@ -15,6 +15,13 @@ import javax.swing.Timer;
 
 import interfaces.GameUpdate;
 
+/***
+ * Extend this class to implement a basic game.
+ * The allocation of the screen and mouse inputs will be provided for you.
+ * 
+ * @author Carl Stika
+ *
+ */
 public abstract class BaseGame extends JFrame implements ActionListener, GameUpdate {
 	/**
 	 * 

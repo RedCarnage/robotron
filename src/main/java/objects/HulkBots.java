@@ -10,6 +10,12 @@ import enums.ObjectTypes;
 import interfaces.DrawObject;
 import sounds.TronSounds;
 
+/***
+ * Hulkbots can not be killed
+ * 
+ * @author Carl Stika
+ *
+ */
 public class HulkBots extends SpriteBase {
 
 	private static final int HULK_LEFT = 0;

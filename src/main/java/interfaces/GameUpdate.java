@@ -2,6 +2,12 @@ package interfaces;
 
 import java.awt.Graphics2D;
 
+/**
+ * Used by BaseGame to provide how to uppdate a implementation.
+ * 
+ * @author Carl Stika
+ *
+ */
 public interface GameUpdate {
 	public void updateGame(long interval);
 	public void renderGame(Graphics2D g2d);

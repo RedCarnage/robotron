@@ -1,5 +1,11 @@
 package objects;
 
+/**
+ * Simple boxing box used for collisions.
+ * 
+ * @author Carl Stika
+ *
+ */
 public class BoundingBox {
 	public float minx, maxx;
 	public float miny, maxy;

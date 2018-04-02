@@ -9,7 +9,6 @@ import java.util.Random;
 
 import javax.swing.SwingUtilities;
 
-import Effects.LaserWriter;
 import Effects.ScreenColorWipe;
 import baseframework.BaseGame;
 import baseframework.SpriteBase;
@@ -31,6 +30,13 @@ import objects.TronPlayer;
 import objects.VectorObject;
 import objects.Woman;
 import utilitys.GameUtils;
+
+/**
+ * A simple Robotron implemntation
+ * 
+ * @author Carl Stika
+ *
+ */
 
 public class Tron extends BaseGame {
 	/**

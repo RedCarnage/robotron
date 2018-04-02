@@ -13,22 +13,21 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+/***
+ * 
+ * @author Carl Stika
+ *
+ */
 public class GameUtils {
 	public static BufferedImage loadImage(String imageName) {
 		BufferedImage result = null;
 		
 		URL imageURL = GameUtils.class.getClassLoader().getResource(imageName);
 		if(imageURL!=null) {
-			File imageFile = new File(imageURL.getFile());
-			if(imageFile.exists()) {
-				try {
-					result = ImageIO.read(imageFile);
-				} catch (IOException e) {
-					System.out.println("Could not load image file " + imageName);
-				}
-			}
-			else {
-				System.out.println("File " + imageName + " does not exist");
+			try {
+				result = ImageIO.read(imageURL.openStream());
+			} catch (IOException e2) {
+				System.out.println("Could not load image file " + imageURL.getFile());
 			}
 		}
 		else {

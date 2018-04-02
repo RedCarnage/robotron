@@ -11,6 +11,12 @@ import enums.ObjectTypes;
 import enums.ObstacleTypes;
 import interfaces.DrawObject;
 
+/***
+ * Simple collision objects.
+ * 
+ * @author Carl Stika
+ *
+ */
 public class Obstacle implements DrawObject {
 
 	private Shape shape = null;

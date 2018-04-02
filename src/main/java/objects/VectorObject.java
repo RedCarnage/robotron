@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 //This object will draw lines, like a vector objects
+/***
+ * 
+ * @author Carl Stika
+ *
+ */
 public class VectorObject {
 	
 	public class LineInfo {

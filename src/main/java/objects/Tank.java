@@ -9,6 +9,12 @@ import baseframework.SpriteIcon;
 import enums.ObjectTypes;
 import interfaces.DrawObject;
 
+/***
+ * Tank robots
+ * 
+ * @author Carl Stika
+ *
+ */
 public class Tank extends SpriteBase {
 	private int[][] spriteSheet = {
 			{0, 274, 34, 37}, //tank 1
