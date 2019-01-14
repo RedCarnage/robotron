@@ -6,6 +6,7 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 import enums.ObjectTypes;
+import game.GlobalState;
 import interfaces.DrawObject;
 import utilitys.GameUtils;
 
@@ -44,7 +45,7 @@ public abstract class SpriteBase implements DrawObject {
 	protected float width = 640.0f;  //640, 576
 	protected float height = 576.0f;
 	
-	private int tx, ty, tw, th;
+	protected int tx, ty, tw, th;
 	
 	protected BufferedImage image;
 	protected boolean dead = false;
@@ -53,6 +54,8 @@ public abstract class SpriteBase implements DrawObject {
 	protected float scalex = 1.0f;
 	protected float scaley = 1.0f;
 	
+	protected int dieAnimationStep = 0;
+	protected boolean dying = false;
 	
 	public SpriteBase(String file) {
 		createTexture(file);
@@ -78,7 +81,9 @@ public abstract class SpriteBase implements DrawObject {
     }
 
     public void setDead() {
-    	dead = true;
+    	//check for type
+    	dying = true;
+    	dieAnimationStep = 1;
     }
 
     public void objectHit(int hitPointsTaken, float[] hitDirection) {
@@ -86,7 +91,7 @@ public abstract class SpriteBase implements DrawObject {
     		hitPoints -= hitPointsTaken;
     		if(hitPoints<=0) {
     			hitPoints = 0;
-    			dead = true;
+    			setDead();
     		}
     	}
     }
@@ -113,11 +118,45 @@ public abstract class SpriteBase implements DrawObject {
     }
 
     public void render(Graphics2D g2d) {
-    	g2d.drawImage(image, (int)posX, (int)posY, (int)posX+(int)width, (int)posY+(int)height, tx, ty, tx+tw, ty+th, null);
+    	
+    	if(GlobalState.getInstance().enemiesAnimatingOn>0) {
+    		int explodespace = GlobalState.getInstance().enemiesAnimatingOn*4;
+    		
+    		int halfHeight = (int)((width*explodespace)/2);
+    		int y = (int)posY - halfHeight;
+    		for(int i=0;i<height;i++) {
+        		g2d.drawImage(image, (int)posX, y+i*explodespace, (int)posX+(int)width, y+i*explodespace+1, 
+        						tx, ty+i, tx+tw, ty+i+1, null);
+    		}
+    	}
+    	else {
+    		if(dieAnimationStep>0) {
+        		int explodespace = dieAnimationStep*4;
+        		
+        		int halfHeight = (int)((width*explodespace)/2);
+        		int y = (int)posY - halfHeight;
+        		for(int i=0;i<height;i++) {
+            		g2d.drawImage(image, (int)posX, y+i*explodespace, (int)posX+(int)width, y+i*explodespace+1, 
+            						tx, ty+i, tx+tw, ty+i+1, null);
+        		}
+    		}
+    		else {
+    			g2d.drawImage(image, (int)posX, (int)posY, (int)posX+(int)width, (int)posY+(int)height, tx, ty, tx+tw, ty+th, null);
+    		}
+    	}
 	}
 
 	//The list of objects can be used for collision
 	public void update(List<DrawObject> npcObjects, List<DrawObject> newSprites) {
+		if(dying) {
+			if(dieAnimationStep==4) {
+				dead = true;
+			}
+			else {
+				dieAnimationStep++;
+			}
+		}
+
 	}
 
 	public void controllerButtons(ByteBuffer buttons) {

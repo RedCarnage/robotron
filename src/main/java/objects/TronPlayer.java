@@ -83,91 +83,108 @@ public class TronPlayer extends SpriteBase {
 
 	@Override
 	public void update(List<DrawObject> npcObjects, List<DrawObject> newSprites) {
-		if(playerInvincableTime>0) {
-			playerInvincableTime--;
-			if(playerInvincableTime==0) {
-				playerHittable = true;
-			}
-		}
+		super.update(npcObjects, newSprites);
 		
-		//base this off of time. since we have a constant frame rate we could use ticks.
-		int diffTime =(int)(System.currentTimeMillis() - lastTime);
-
-		//Increment animation frame.
-		if(diffTime>=(1000/6)) {
-			if(move) {
-				frameoffset = (frameoffset+1)%3;
-			}
-			lastTime = System.currentTimeMillis();
-
-		}
-		
-		//Check missle collisions with NPC objects. 
-		List<DrawObject> misslesToRemove = new ArrayList<>(); 
-		for(PlayerMissile missle : missleList) {
-			if(!missle.isDead()) {
-				missle.update(npcObjects, newSprites);
-			}
-			else {
-				//need to remove
-				misslesToRemove.add(missle);
-			}
-		}
-		
-		missleList.removeAll(misslesToRemove);
-		
-
-	    /**
-	     * Check for collisions with player
-	     */
-	    for(DrawObject obj : npcObjects) {
-	    	if(obj!=this) {
-	    		float objX = obj.getPosX();
-	    		float objY = obj.getPosY();
-	    		float objWidth = obj.getWidth();
-	    		float objHeight = obj.getHeight();
-	    		
-			    if( posX <=(objX+objWidth) &&
-						(posX+width)>=objX &&  
-						posY<=(objY+objHeight) &&
-						(posY+height)>=objY					
-						) {
-			    	SpriteBase icon =  null;
-			    	switch(obj.getObjectType()) {
-			    		case OBJECT_TYPE_MAN :
-			    		case OBJECT_TYPE_WOMAN :
-			    		case OBJECT_TYPE_MIKEY :
-			    			obj.setDead(); //to get cleaned up
-			    			int iconOffset = numFamilyTaken;
-			    			if(iconOffset>4) {
-			    				iconOffset = 4;
-			    			}
-			    			icon = new SpriteIcon(image, SpriteIcon.ICON_1000+iconOffset);
-			    			icon.setPos(obj.getPosX(), obj.getPosY());
-			    			numFamilyTaken++;
-			    			TronSounds.getInstance().playPickupFamily();
-			    			
-			    			GlobalState.getInstance().addScore(1000*iconOffset);
-			    			break;
-			    		case OBJECT_TYPE_ENFORCERS:
-			    		case OBJECT_TYPE_GRUNT:
-			    		case OBJECT_TYPE_HULK:
-			    		case OBJECT_TYPE_OBSTACLE:
-			    			if(playerHittable) {
-			    				GlobalState.getInstance().removePlayerLife();
-								playerInvincableTime = 120;
-								playerHittable = false;
-			    			}
-			    			break; 
-			    		default:
-			    			break;
-			    	}
-			    	if(icon!=null) {
-		    			newSprites.add(icon);
-			    	}
+		if(!dying) {
+			if(playerInvincableTime>0) {
+				playerInvincableTime--;
+				if(playerInvincableTime==0) {
+					playerHittable = true;
 				}
-	    	}
-	    }
+			}
+			
+			//base this off of time. since we have a constant frame rate we could use ticks.
+			int diffTime =(int)(System.currentTimeMillis() - lastTime);
+	
+			//Increment animation frame.
+			if(diffTime>=(1000/6)) {
+				if(move) {
+					frameoffset = (frameoffset+1)%3;
+				}
+				lastTime = System.currentTimeMillis();
+	
+			}
+			
+			//Check missle collisions with NPC objects. 
+			List<DrawObject> misslesToRemove = new ArrayList<>(); 
+			for(PlayerMissile missle : missleList) {
+				if(!missle.isDead()) {
+					missle.update(npcObjects, newSprites);
+				}
+				else {
+					//need to remove
+					misslesToRemove.add(missle);
+				}
+			}
+			
+			missleList.removeAll(misslesToRemove);
+			
+	
+		    /**
+		     * Check for collisions with player
+		     */
+		    for(DrawObject obj : npcObjects) {
+		    	if(obj!=this) {
+		    		float objX = obj.getPosX();
+		    		float objY = obj.getPosY();
+		    		float objWidth = obj.getWidth();
+		    		float objHeight = obj.getHeight();
+		    		
+				    if( posX <=(objX+objWidth) &&
+							(posX+width)>=objX &&  
+							posY<=(objY+objHeight) &&
+							(posY+height)>=objY					
+							) {
+				    	SpriteBase icon =  null;
+				    	switch(obj.getObjectType()) {
+				    		case OBJECT_TYPE_MAN :
+				    		case OBJECT_TYPE_WOMAN :
+				    		case OBJECT_TYPE_MIKEY :
+				    			obj.setDead(); //to get cleaned up
+				    			int iconOffset = numFamilyTaken;
+				    			if(iconOffset>4) {
+				    				iconOffset = 4;
+				    			}
+				    			icon = new SpriteIcon(image, SpriteIcon.ICON_1000+iconOffset);
+				    			icon.setPos(obj.getPosX(), obj.getPosY());
+				    			numFamilyTaken++;
+				    			TronSounds.getInstance().playPickupFamily();
+				    			
+				    			GlobalState.getInstance().addScore(1000*iconOffset);
+				    			
+				    			switch(obj.getObjectType()) {
+						    		case OBJECT_TYPE_MAN :
+					    				GlobalState.getInstance().man--;
+					    				break;
+						    		case OBJECT_TYPE_WOMAN :
+					    				GlobalState.getInstance().woman--;
+					    				break;
+						    		case OBJECT_TYPE_MIKEY :
+					    				GlobalState.getInstance().mikey--;
+					    				break;
+				    			}
+				    			break;
+				    		case OBJECT_TYPE_ENFORCERS:
+				    		case OBJECT_TYPE_GRUNT:
+				    		case OBJECT_TYPE_HULK:
+				    		case OBJECT_TYPE_OBSTACLE:
+				    			if(playerHittable) {
+				    				TronSounds.getInstance().playPlayerDie();
+				    				GlobalState.getInstance().removePlayerLife();
+									playerInvincableTime = 120;
+									playerHittable = false;
+				    			}
+				    			break; 
+				    		default:
+				    			break;
+				    	}
+				    	if(icon!=null) {
+			    			newSprites.add(icon);
+				    	}
+					}
+		    	}
+		    }
+		}
 	}
 
 	@Override

@@ -1,9 +1,11 @@
 package game;
 
 import enums.GameStates;
+import enums.ObjectTypes;
 
 /**
- * globalState for the tron Game.
+ * globalState for the robotron Game.
+ * 
  * 
  * @author Carl Stika
  *
@@ -20,6 +22,16 @@ public class GlobalState {
 	private int numLives = 4;
 	
 	public int playerDyingTime=0;
+	
+	public int enemiesAnimatingOn = 0;
+	public int playertAnimatingOn = 0;
+	
+	public int numRobotsWave = 0;
+	public int man = 0;
+	public int woman = 0;
+	public int mikey = 0;
+	public int hulkBots = 0;
+	public int tanks = 0;
 	
 	private GlobalState() {
 		//init the highscores
@@ -77,5 +89,9 @@ public class GlobalState {
 	public void removePlayerLife() {
 		numLives--;
 		playerDyingTime = 60;
+	}
+
+	public int getNumLives() {
+		return numLives;
 	}
 }

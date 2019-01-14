@@ -42,42 +42,46 @@ public class BadRobot extends SpriteBase {
 	
 	@Override
 	public void update(List<DrawObject> npcObjects, List<DrawObject> newSprites) {
-		DrawObject mainPlayer = npcObjects.stream().filter(d -> (d.getObjectType()==ObjectTypes.OBJECT_TYPE_PLAYER)).findFirst().orElse(null);
-		float dx = 320;
-		float dy = 240;
-		
-		if(mainPlayer!=null) {
-			dx = mainPlayer.getPosX() - posX;
-			dy = mainPlayer.getPosY() - posY;
-		}
-		
-		float len = (float)Math.sqrt(dx*dx+dy*dy);
-		
-		if(len>0.0f) {
-			dx /= len;
-			dy /= len;
-		}
-		
-		//base this off of time
-		int diffTime =(int)(System.currentTimeMillis() - time);
+		super.update(npcObjects, newSprites);
 
-		//Need IDLE
-		if(diffTime>=(1000/6)) {
-			float oldPosX = posX;
-			float oldPosY = posY;
-			posX += dx*speed;  //speed
-			posY += dy*speed;  //speed
+		if(!dying) {
+	
+			DrawObject mainPlayer = npcObjects.stream().filter(d -> (d.getObjectType()==ObjectTypes.OBJECT_TYPE_PLAYER)).findFirst().orElse(null);
+			float dx = 320;
+			float dy = 240;
 			
-			if(!outOfBounds()) {
-				frameoffset = (frameoffset+1)%3;
+			if(mainPlayer!=null) {
+				dx = mainPlayer.getPosX() - posX;
+				dy = mainPlayer.getPosY() - posY;
 			}
-			else {
-				posX = oldPosX;
-				posY = oldPosY;
+			
+			float len = (float)Math.sqrt(dx*dx+dy*dy);
+			
+			if(len>0.0f) {
+				dx /= len;
+				dy /= len;
 			}
-			time = System.currentTimeMillis();
-		}
-		
+			
+			//base this off of time
+			int diffTime =(int)(System.currentTimeMillis() - time);
+	
+			//Need IDLE
+			if(diffTime>=(1000/6)) {
+				float oldPosX = posX;
+				float oldPosY = posY;
+				posX += dx*speed;  //speed
+				posY += dy*speed;  //speed
+				
+				if(!outOfBounds()) {
+					frameoffset = (frameoffset+1)%3;
+				}
+				else {
+					posX = oldPosX;
+					posY = oldPosY;
+				}
+				time = System.currentTimeMillis();
+			}
+		}		
 	}
 
 	@Override
@@ -95,7 +99,8 @@ public class BadRobot extends SpriteBase {
 	@Override
 	public void objectHit(int hitPointsTaken, float[] hitDirection) {
 		super.objectHit(hitPointsTaken, hitDirection);
-		if(dead) {
+		if(dead || dying) {
+			GlobalState.getInstance().numRobotsWave--;
 			TronSounds.getInstance().playRobotDir();
 			GlobalState.getInstance().addScore(100);
 		}

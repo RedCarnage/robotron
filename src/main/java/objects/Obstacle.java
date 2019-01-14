@@ -74,14 +74,13 @@ public class Obstacle implements DrawObject {
 
 	@Override
 	public ObjectTypes getObjectType() {
-		// TODO Auto-generated method stub
 		return ObjectTypes.OBJECT_TYPE_OBSTACLE;
 	}
 
 	@Override
 	public void setPos(float x, float y) {
-		// TODO Auto-generated method stub
-		
+		this.x = (int)x;
+		this.y = (int)y;
 	}
 
 	@Override
@@ -115,12 +114,10 @@ public class Obstacle implements DrawObject {
 	@Override
 	public void setDead() {
 		dead = true;
-		
 	}
 
 	@Override
 	public boolean isDead() {
-		// TODO Auto-generated method stub
 		return dead;
 	}
 

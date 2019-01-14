@@ -7,6 +7,7 @@ import java.util.Random;
 
 import baseframework.SpriteBase;
 import enums.ObjectTypes;
+import game.GlobalState;
 import interfaces.DrawObject;
 
 /***
@@ -76,71 +77,74 @@ public class Man extends SpriteBase {
 	
 	@Override
 	public void update(List<DrawObject> npcObjects, List<DrawObject> newSprites) {
+		super.update(npcObjects, newSprites);
 		
-		//check if a hulk bot ran over him.
-		float len = (float)Math.sqrt(dx*dx+dy*dy);
-		
-		dx /= len;
-		dy /= len;
-		
-		//base this off of time
-		int diffTime =(int)(System.currentTimeMillis() - time);
-
-		//Need IDLE
-		if(diffTime>=(1000/6)) {
-
-			float oldPosX = posX;
-			float oldPosY = posY;
-
-			posX += dx*speed;  //speed
-			posY += dy*speed;  //speed
+		if(!dying) {
 			
-			if(!outOfBounds()) {
-				frameoffset = (frameoffset+1)%3;
-				time = System.currentTimeMillis();
+			//check if a hulk bot ran over him.
+			float len = (float)Math.sqrt(dx*dx+dy*dy);
+			
+			dx /= len;
+			dy /= len;
+			
+			//base this off of time
+			int diffTime =(int)(System.currentTimeMillis() - time);
+	
+			//Need IDLE
+			if(diffTime>=(1000/6)) {
+	
+				float oldPosX = posX;
+				float oldPosY = posY;
+	
+				posX += dx*speed;  //speed
+				posY += dy*speed;  //speed
 				
-				if(Math.abs(dx)>Math.abs(dy)) {
-					if(dx<0) {
-						currentFrame = MAN_LEFT;
+				if(!outOfBounds()) {
+					frameoffset = (frameoffset+1)%3;
+					time = System.currentTimeMillis();
+					
+					if(Math.abs(dx)>Math.abs(dy)) {
+						if(dx<0) {
+							currentFrame = MAN_LEFT;
+						}
+						else {
+							currentFrame = MAN_RIGHT;
+						}
 					}
 					else {
-						currentFrame = MAN_RIGHT;
+						if(dy<0) {
+							currentFrame = MAN_UP;
+						}
+						else {
+							currentFrame = MAN_DOWN;
+						}
+						
 					}
 				}
 				else {
-					if(dy<0) {
-						currentFrame = MAN_UP;
+					posX = oldPosX;
+					posY = oldPosY;
+					switch(random.nextInt(4)) {
+					case 0:
+						dx = 1.0f;
+						dy = 0.0f;
+						break;
+					case 1:
+						dx = -1.0f;
+						dy = 0.0f;
+						break;
+					case 2:
+						dx = 0.0f;
+						dy = 1.0f;
+						break;
+					case 3:
+						dx = 0.0f;
+						dy = -1.0f;
+						break;
 					}
-					else {
-						currentFrame = MAN_DOWN;
-					}
-					
 				}
 			}
-			else {
-				posX = oldPosX;
-				posY = oldPosY;
-				switch(random.nextInt(4)) {
-				case 0:
-					dx = 1.0f;
-					dy = 0.0f;
-					break;
-				case 1:
-					dx = -1.0f;
-					dy = 0.0f;
-					break;
-				case 2:
-					dx = 0.0f;
-					dy = 1.0f;
-					break;
-				case 3:
-					dx = 0.0f;
-					dy = -1.0f;
-					break;
-				}
-			}
-		}
-		
+		}		
 	}
 
 	@Override
@@ -152,7 +156,7 @@ public class Man extends SpriteBase {
 		width = coords[2];
 	    height = coords[3];
 
-	    super.render(g2d);
+		g2d.drawImage(image, (int)posX, (int)posY, (int)posX+(int)width, (int)posY+(int)height, tx, ty, tx+tw, ty+th, null);
 	}
 
 }

@@ -54,14 +54,13 @@ public class Tron extends BaseGame {
 	private List<DrawObject> gameObjects = new ArrayList<>();
 	
 	private Random random = new Random();
-//	private boolean playing = false;
 	
 	private boolean inScreenWipe = false;
 	private ScreenWipe screenWipe = null;
 	
 	private int screenWidth;
 	private int screenHeight;
-	
+	private boolean verbose = false;
 	
 	private Controller gameController = null; 
 	public float[] leftStick = {0.0f, 0.0f};
@@ -73,7 +72,6 @@ public class Tron extends BaseGame {
 		this.screenHeight = height;
 
 		initGameController();
-		
 				
 		//Image used for all the textures
 		tronTexture = GameUtils.loadImage("robotronsprites.png");
@@ -113,25 +111,27 @@ public class Tron extends BaseGame {
 	}
 
 	/**
-	 * Initialize the game controller. 
+	 * Initialize the game controller.
+	 * 
+	 * Assumes the fist gamepad is can find.
 	 */
 	private void initGameController() {
 		ControllerEnvironment ce = ControllerEnvironment.getDefaultEnvironment(); 
 		Controller[] cs = ce.getControllers(); 
+
 		for (int i = 0; i < cs.length; i++) { 
 			if(cs[i].getType().equals(Controller.Type.GAMEPAD)){
 				gameController = cs[i];
 				System.out.printf("found game pad at %d", i);
+				break;
 			}
-			System.out.println(i + ". " + cs[i].getName() + ", " + cs[i].getType() ); 
 		}
 		
-		if(gameController!=null) {
+		if(verbose && gameController!=null) {
 			Component[] components = gameController.getComponents();
 			
 			for(int i=0;i<components.length;i++) {
 				System.out.println(i + ". " + components[i].getName() + ", " + components[i].isAnalog() ); 
-				
 			}
 		}
 	}
@@ -170,77 +170,86 @@ public class Tron extends BaseGame {
 		
 //		title.setPos(100, 200);
 		FontBase startGame = new FontBase(tronTexture);
-		startGame.addString("Start Game");
+		startGame.addString("Press A Start Game");
 		startGame.setPos(320-40, 300);
 		gameObjects.add(startGame);
 		
 	}
 	
+	
+	/**
+	 * populateBadRobotsForWave
+	 * 
+	 * populate the level with the bad guys.
+	 * 
+	 */
 	private void populateBadRobotsForWave() {
+		GlobalState globalState = GlobalState.getInstance();
+		int waveNumber = globalState.getWaveNumber();
+		
+		globalState.numRobotsWave = 12 + ((waveNumber-1)*5);
+		globalState.man = 1;
+		globalState.woman = 1;
+		globalState.mikey = 1;
+		globalState.hulkBots = 0;
+		globalState.tanks = 0;
+		if(waveNumber>1) {
+			globalState.hulkBots = 3;
+			globalState.tanks = 1;
+		}
 
+		placeObjectsOnPlayfeild();
+	}
+
+
+	/**
+	 * place the objects on the playfeild.
+	 * 
+	 */
+	private void placeObjectsOnPlayfeild() {
+		GlobalState.getInstance().enemiesAnimatingOn = 50;
 //		inScreenWipe = true;
 		gameObjects.clear();
 		
-		 
-/*		FontBase stringtest;
-
-		stringtest = new FontBase(tronTexture); // 608, 512);
-		stringtest.addString(""+tronPlayer.getScore());
-		stringtest.setPos(100, 10);
-		gameObjects.add(stringtest);
-	*/
 		tronPlayer.clear();
 		gameObjects.add(tronPlayer);
 
-		int waveNumber = GlobalState.getInstance().getWaveNumber();
-		
-		int numRobotsWave = 12 + ((waveNumber-1)*5);
-		int man = 1;
-		int woman = 1;
-		int mikey = 1;
-		int hulkBots = 0;
-		int tanks = 0;
-		if(waveNumber>1) {
-			hulkBots = 3;
-			tanks = 1;
-		}
-		
 		//add obstacles
-		for(int i=0;i<numRobotsWave;i++) {
+		for(int i=0;i<GlobalState.getInstance().numRobotsWave;i++) {
 			SpriteBase enemy = new BadRobot(tronTexture);
 			enemy.setPos((random.nextFloat()*610.0f)+10.0f, (random.nextFloat()*450.0f)+10.0f);
 
 			gameObjects.add(enemy);
 		}
 		
-		for(int i=0;i<hulkBots;i++) {
+		for(int i=0;i<GlobalState.getInstance().hulkBots;i++) {
 			SpriteBase enemy = new HulkBots(tronTexture);
 			enemy.setPos((random.nextFloat()*610.0f)+10.0f, (random.nextFloat()*450.0f)+10.0f);
 
 			gameObjects.add(enemy);
 		}
 
-		for(int i=0;i<tanks;i++) {
+		for(int i=0;i<GlobalState.getInstance().tanks;i++) {
 			SpriteBase enemy = new Tank(tronTexture);
 			enemy.setPos((random.nextFloat()*610.0f)+10.0f, (random.nextFloat()*450.0f)+10.0f);
 
 			gameObjects.add(enemy);
 		}
-		for(int i=0;i<man;i++) {
+		for(int i=0;i<GlobalState.getInstance().man;i++) {
 			SpriteBase enemy = new Man(tronTexture);
 			enemy.setPos((random.nextFloat()*610.0f)+10.0f, (random.nextFloat()*450.0f)+10.0f);
 
 			gameObjects.add(enemy);
 		}
 
-		for(int i=0;i<woman;i++) {
+		for(int i=0;i<GlobalState.getInstance().woman;i++) {
 			SpriteBase enemy = new Woman(tronTexture);
 			enemy.setPos((random.nextFloat()*610.0f)+10.0f, (random.nextFloat()*450.0f)+10.0f);
 
 			gameObjects.add(enemy);
 		}
 
-		for(int i=0;i<mikey;i++) {
+		for(int i=0;i<GlobalState.getInstance().mikey;i++) {
 			SpriteBase enemy = new Mikey(tronTexture);
 			enemy.setPos((random.nextFloat()*610.0f)+10.0f, (random.nextFloat()*450.0f)+10.0f);
 
@@ -248,8 +257,11 @@ public class Tron extends BaseGame {
 		}
 	}
 
-	
-	
+	/***
+	 * updateGame
+	 * 
+	 * Main update loop. This will be called 60 times a second
+	 */
 	@Override
 	public void updateGame(long interval) {
 		if(gameController!=null) checkControllersForGame();
@@ -268,7 +280,9 @@ public class Tron extends BaseGame {
 		        switch(GlobalState.getInstance().getGameState()) {
 		        	 case GAME_PLAYING:
 		             {
-				       	checkControllersForGame();
+		            	 if(GlobalState.getInstance().enemiesAnimatingOn>0) {
+		            		 checkControllersForGame();
+		            	 }
 				
 				       	//Put logic somewhere else
 				      	long numGrunts = gameObjects.stream().filter(t->t.getObjectType()==ObjectTypes.OBJECT_TYPE_GRUNT).count();
@@ -296,6 +310,9 @@ public class Tron extends BaseGame {
 					tronPlayer.setPos(640/2,  480/2);
 					//Do player return on screen animation
 				}
+				if(GlobalState.getInstance().playerDyingTime==0) {
+					placeObjectsOnPlayfeild();
+				}
 			}
 		}
 		else {
@@ -307,7 +324,9 @@ public class Tron extends BaseGame {
 				inScreenWipe = false;
 			}
 		}
-
+		if(GlobalState.getInstance().enemiesAnimatingOn>0) {
+			GlobalState.getInstance().enemiesAnimatingOn--;
+		}
 	}
 
 	@Override
@@ -383,27 +402,9 @@ public class Tron extends BaseGame {
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				new Tron("Swing Tron", 640+10, 480+30);
+				new Tron("Swing Tron", 650, 510);
 			}
 		});	
-	}
-
-	@Override
-	public void mousePosition(int x, int y) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseButtonPress(int buttons) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseButtonRelease(int buttons) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -434,7 +435,6 @@ public class Tron extends BaseGame {
 				tronPlayer.controllerLeftStick(2.0f, 0.0f);
 				break;
 		}
-//		public void controllerLeftStick(float xAxis, float yAxis) {
 	}
 
 	@Override
@@ -452,4 +452,24 @@ public class Tron extends BaseGame {
 		}
 	}
 
+	/**
+	 * No Mouse support for now.
+	 */
+	@Override
+	public void mousePosition(int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseButtonPress(int buttons) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseButtonRelease(int buttons) {
+		// TODO Auto-generated method stub
+		
+	}
 }

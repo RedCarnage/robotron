@@ -17,13 +17,13 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  */
 public class TronSounds {
 	
-//	private WaveData fireSound = null;
 	private long device;
 	private boolean initialized = false;
 	private Clip fireSoundSource;
 	private Clip saveFamilySource;
 	private Clip dieFamilySource;
 	private Clip robotDieSource;
+	private Clip playerDieSource;
     private static TronSounds instance = null; 
 	
     public static TronSounds getInstance() {
@@ -51,6 +51,7 @@ public class TronSounds {
 		saveFamilySource = loadSoundClip("savefamily.wav");
 		dieFamilySource = loadSoundClip("familydie.wav");
 		robotDieSource = loadSoundClip("robotdie.wav");
+		playerDieSource = loadSoundClip("playerdie.wav");
 	}
 	
 	
@@ -107,6 +108,14 @@ public class TronSounds {
 		if(initialized) {
 			robotDieSource.setFramePosition(0);
 			robotDieSource.start();
+		}
+	}
+
+	public void playPlayerDie() {
+		if(initialized) {
+			System.out.println("Play player die");
+			playerDieSource.setFramePosition(0);
+			playerDieSource.start();
 		}
 	}
 }

@@ -54,96 +54,101 @@ public class HulkBots extends SpriteBase {
 
 	@Override
 	public void update(List<DrawObject> npcObjects, List<DrawObject> newSprites) {
-		//need position to the player.
-		//currently move to the middle
-		DrawObject closestFamily = null;
-		float closestFamilyDist = 0.0f;
-
-		//Find the closet family member
-		for(DrawObject obj : npcObjects) {
-			if(	obj.getObjectType()==ObjectTypes.OBJECT_TYPE_MAN ||
-				obj.getObjectType()==ObjectTypes.OBJECT_TYPE_WOMAN ||
-				obj.getObjectType()==ObjectTypes.OBJECT_TYPE_MIKEY) {
-				float dx = posX - obj.getPosX(); 
-				float dy = posY - obj.getPosY();
-				float dist = dx*dx+dy*dy;
-				if(closestFamily==null || dist<closestFamilyDist) {
-					closestFamily = obj;
-					dist=closestFamilyDist;
+		super.update(npcObjects, newSprites);
+		
+		if(!dying) {
+	
+			//need position to the player.
+			//currently move to the middle
+			DrawObject closestFamily = null;
+			float closestFamilyDist = 0.0f;
+	
+			//Find the closet family member
+			for(DrawObject obj : npcObjects) {
+				if(	obj.getObjectType()==ObjectTypes.OBJECT_TYPE_MAN ||
+					obj.getObjectType()==ObjectTypes.OBJECT_TYPE_WOMAN ||
+					obj.getObjectType()==ObjectTypes.OBJECT_TYPE_MIKEY) {
+					float dx = posX - obj.getPosX(); 
+					float dy = posY - obj.getPosY();
+					float dist = dx*dx+dy*dy;
+					if(closestFamily==null || dist<closestFamilyDist) {
+						closestFamily = obj;
+						dist=closestFamilyDist;
+					}
 				}
 			}
-		}
-		
-		float dx = posX;
-		float dy = posY;
-		if(closestFamily!=null) {
-			if( posX <=(closestFamily.getPosX()+closestFamily.getWidth()) &&
-					(posX+width)>=closestFamily.getPosX() &&  
-					posY<=(closestFamily.getPosY()+closestFamily.getHeight()) &&
-					(posY+height)>=closestFamily.getPosY()					
-					) {
-				closestFamily.setDead();
-				TronSounds.getInstance().playFamilyDie();
+			
+			float dx = posX;
+			float dy = posY;
+			if(closestFamily!=null) {
+				if( posX <=(closestFamily.getPosX()+closestFamily.getWidth()) &&
+						(posX+width)>=closestFamily.getPosX() &&  
+						posY<=(closestFamily.getPosY()+closestFamily.getHeight()) &&
+						(posY+height)>=closestFamily.getPosY()					
+						) {
+					closestFamily.setDead();
+					TronSounds.getInstance().playFamilyDie();
+					
+					//create a new sprite icon
+					SpriteIcon skull = new SpriteIcon(image, SpriteIcon.ICON_FAMILY_DEATH);
+					skull.setPos(closestFamily.getPosX(), closestFamily.getPosY());
+					newSprites.add(skull);
+				}
 				
-				//create a new sprite icon
-				SpriteIcon skull = new SpriteIcon(image, SpriteIcon.ICON_FAMILY_DEATH);
-				skull.setPos(closestFamily.getPosX(), closestFamily.getPosY());
-				newSprites.add(skull);
-			}
-			
-			dx = closestFamily.getPosX() - posX;
-			dy = closestFamily.getPosY() - posY;
-		}
-		else {
-			//No Family go after player
-			DrawObject mainPlayer = npcObjects.stream().filter(d -> (d.getObjectType()==ObjectTypes.OBJECT_TYPE_PLAYER)).findFirst().orElse(null);
-			
-			if(mainPlayer!=null) {
-				dx = mainPlayer.getPosX() - posX;
-				dy = mainPlayer.getPosY() - posY;
-			}
-		}
-		float len = (float)Math.sqrt(dx*dx+dy*dy);
-		
-		dx /= len;
-		dy /= len;
-		
-		//base this off of time
-		int diffTime =(int)(System.currentTimeMillis() - time);
-
-		//Need IDLE
-		if(diffTime>=(1000/6)) {
-			posX += dx*speed;  //speed
-			posY += dy*speed;  //speed
-			
-			frameoffset = (frameoffset+1)%3;
-			time = System.currentTimeMillis();
-			
-			if(Math.abs(dx)>Math.abs(dy)) {
-				if(dx<0) {
-					currentFrame = HULK_LEFT;
-				}
-				else {
-					currentFrame = HULK_RIGHT;
-				}
+				dx = closestFamily.getPosX() - posX;
+				dy = closestFamily.getPosY() - posY;
 			}
 			else {
-				if(dy<0) {
-					currentFrame = HULK_UP;
+				//No Family go after player
+				DrawObject mainPlayer = npcObjects.stream().filter(d -> (d.getObjectType()==ObjectTypes.OBJECT_TYPE_PLAYER)).findFirst().orElse(null);
+				
+				if(mainPlayer!=null) {
+					dx = mainPlayer.getPosX() - posX;
+					dy = mainPlayer.getPosY() - posY;
+				}
+			}
+			float len = (float)Math.sqrt(dx*dx+dy*dy);
+			
+			dx /= len;
+			dy /= len;
+			
+			//base this off of time
+			int diffTime =(int)(System.currentTimeMillis() - time);
+	
+			//Need IDLE
+			if(diffTime>=(1000/6)) {
+				posX += dx*speed;  //speed
+				posY += dy*speed;  //speed
+				
+				frameoffset = (frameoffset+1)%3;
+				time = System.currentTimeMillis();
+				
+				if(Math.abs(dx)>Math.abs(dy)) {
+					if(dx<0) {
+						currentFrame = HULK_LEFT;
+					}
+					else {
+						currentFrame = HULK_RIGHT;
+					}
 				}
 				else {
-					currentFrame = HULK_DOWN;
+					if(dy<0) {
+						currentFrame = HULK_UP;
+					}
+					else {
+						currentFrame = HULK_DOWN;
+					}
+					
 				}
-				
 			}
+			
+			int[] coords = spriteSheet[currentFrame+frameoffset];
+	
+			setTextureCoords(coords[0], coords[1], coords[2], coords[3]);
+	
+			width = coords[2];
+		    height = coords[3];
 		}
-		
-		int[] coords = spriteSheet[currentFrame+frameoffset];
-
-		setTextureCoords(coords[0], coords[1], coords[2], coords[3]);
-
-		width = coords[2];
-	    height = coords[3];
 	}
 	
 	@Override
@@ -165,7 +170,7 @@ public class HulkBots extends SpriteBase {
     	super.objectHit(hitPointsTaken, hitDirection);
 		posX += hitDirection[0]*speed;  //speed
 		posY += hitDirection[1]*speed;  //speed
-    	
+		
     }
 	
 }
